@@ -1,0 +1,21 @@
+version: "3.6"
+
+networks:
+  default:
+    name: network
+
+volumes:
+  dbdata:
+
+services:
+  api:
+    container_name: auth-api
+    build:
+      context: .
+      dockerfile: build/node/Dockerfile
+    restart: "no"
+    env_file: ./build/.env.list
+    networks:
+      - default
+    ports:
+      - "8081:80"

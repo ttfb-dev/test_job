@@ -1,0 +1,36 @@
+openapi: "3.0.0"
+info:
+  version: 0.0.1
+  title: subscriptions Api
+servers:
+  - url: /
+    description: Api
+
+paths:
+  /v1/rating:
+    get:
+      summary: Проверка токена авторизации
+      operationId: introspect-auth-token
+      tags:
+        - /auth
+      responses:
+        "200":
+          description: Токен валидный
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_unix_timestamp:
+                    type: integer
+              example: { "current_unix_timestamp": 1602242279 }
+        "401":
+          description: Проверка провалена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_unix_timestamp:
+                    type: integer
+              example: { "current_unix_timestamp": 1602242279 }

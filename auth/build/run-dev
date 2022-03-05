@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+
+export $(cat ./build/.env.base)
+export $(cat ./build/.env.base.dev)
+
+docker network create network || true
+
+export COMPOSE_FILE=docker-compose.dev.yml
+export COMPOSE_PROJECT_NAME=auth-nodejs
+
+docker-compose build
+docker-compose up -d --remove-orphans
+docker-compose logs -f

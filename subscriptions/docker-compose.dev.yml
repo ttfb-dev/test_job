@@ -1,0 +1,50 @@
+version: "3.6"
+
+networks:
+  default:
+    name: network
+
+volumes:
+  dbdata:
+
+services:
+  api:
+    container_name: subscriptions-api
+    build:
+      context: .
+      dockerfile: build/node/Dockerfile
+    restart: "no"
+    env_file: ./build/.env.list
+    command: sh -c "npm run api:start"
+    networks:
+      - default
+    ports:
+      - "8082:80"
+    depends_on:
+      - mysql
+
+  webhooks:
+    container_name: subscriptions-webhooks
+    build:
+      context: .
+      dockerfile: build/node/Dockerfile
+    restart: "no"
+    env_file: ./build/.env.list
+    command: sh -c "npm run webhooks:start"
+    networks:
+      - default
+    ports:
+      - "8083:80"
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: subscriptions-mysql
+    image: mysql:8
+    volumes:
+      - ./build/mysql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - "dbdata:/var/lib/mysql"
+    env_file: ./build/.env.list
+    restart: "no"
+    ports:
+      - "3306:3306"

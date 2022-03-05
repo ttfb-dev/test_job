@@ -1,0 +1,18 @@
+version: "3.6"
+
+networks:
+  default:
+    name: network
+
+services:
+  api-gw:
+    container_name: api-gw
+    build:
+      context: .
+      dockerfile: ./build/nodejs/Dockerfile
+    restart: "no"
+    env_file: ./build/.env.list
+    networks:
+      - default
+    ports:
+      - "80:80"
