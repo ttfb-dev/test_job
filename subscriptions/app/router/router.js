@@ -1,6 +1,9 @@
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import fetch from "node-fetch";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const router = {
   init: (app) => {
