@@ -82,7 +82,7 @@ services:
         "--loose-group-replication-local-address=subscriptions-mysql-master:6606",
       ]
     env_file: ./build/.env.list
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "3306:3306"
 
@@ -99,7 +99,7 @@ services:
         "--loose-group-replication-local-address=subscriptions-mysql-slave:6606",
       ]
     env_file: ./build/.env.list
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "3307:3306"
     depends_on:
