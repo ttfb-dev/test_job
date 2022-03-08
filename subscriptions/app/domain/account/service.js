@@ -89,17 +89,22 @@ class AccountService {
     const top = await repository.getTop(5);
     return top;
   }
+
+  async changeBalance(login, balanceDiff) {
+    const repository = this.getRepository(true);
+    const account = await this.get(login);
+    if (account === undefined) {
+      throw new EntityNotFoundError("account", login);
+    }
+
+    // в своём аккаунте меняем баланс
+    await repository.changeBalance(login, balanceDiff);
+
+    const subscriptionLine = await lineSubscriptionService.getLine(login, true);
+
+    // и планируем обновление балансов всех, кто на нас подписан
+    await this.sheduleAccountsRefresh(subscriptionLine.parents);
+  }
 }
 
 export default new AccountService();
-
-[
-  "60000000000063843",
-  "60000000000068851",
-  "60000000000069853",
-  "60000000000065845",
-  "60000000000067850",
-  "60000000000070854",
-  "60000000000071855",
-  "60000000000066847",
-];

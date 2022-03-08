@@ -6,6 +6,7 @@ import { EventParseError } from "./list/EventParseError.js";
 import { EventCreateError } from "./list/EventCreateError.js";
 import { WriteToSlaveRepositoryError } from "./list/WriteToSlaveRepositoryError.js";
 import { SubscribeNotFoundError } from "./list/SubscribeNotFoundError.js";
+import { NotEnouthBalanceError } from "./list/NotEnouthBalanceError.js";
 
 import { errorHandler } from "./errorHandler.js";
 import { errorWrapper } from "./errorWrapper.js";
@@ -20,6 +21,7 @@ export {
   EventCreateError,
   WriteToSlaveRepositoryError,
   SubscribeNotFoundError,
+  NotEnouthBalanceError,
   errorHandler,
   errorLogger,
   errorWrapper,

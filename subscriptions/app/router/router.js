@@ -3,6 +3,7 @@ import { accountHandler } from "../domain/account/index.js";
 import { subscriptionHandler } from "../domain/subscription/index.js";
 import { errorWrapper } from "../errors/index.js";
 import { body, header } from "express-validator";
+import validator from "./validator.js";
 
 const router = {
   init: (app) => {
@@ -16,6 +17,15 @@ const router = {
       "/v1/refresh",
       header("user").isNumeric({ no_symbols: true }),
       errorWrapper(accountHandler.refreshAccount)
+    );
+
+    app.post(
+      "/v1/change-balance",
+      body("login").isNumeric({ no_symbols: true }),
+      body("correlation").isString(),
+      body("correlation").custom(validator.checkCorrelation),
+      body("balance_diff").isInt(),
+      errorWrapper(accountHandler.changeBalance)
     );
 
     app.post(

@@ -1,5 +1,8 @@
 import db from "../../db/index.js";
-import { WriteToSlaveRepositoryError } from "../../errors/index.js";
+import {
+  NotEnouthBalanceError,
+  WriteToSlaveRepositoryError,
+} from "../../errors/index.js";
 
 export class AccountRepository {
   table;
@@ -131,5 +134,40 @@ export class AccountRepository {
     const [rows] = await this.connection.execute(query);
 
     return rows;
+  };
+
+  changeBalance = async (login, balanceDiff) => {
+    const queryGetBalance = `
+      SELECT balance_usd
+      FROM ${this.table}
+      WHERE login = ${login}
+      LIMIT 1
+    `;
+
+    const queryUpdateBalance = `
+      UPDATE ${this.table}
+      SET balance_usd = balance_usd + ${balanceDiff}, balance_usd_sub = balance_usd_sub + ${balanceDiff}
+      WHERE login = ${login}
+      LIMIT 1
+    `;
+
+    try {
+      await this.connection.execute(
+        "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE"
+      );
+
+      const [rows] = await this.connection.execute(queryGetBalance);
+
+      const balance_usd = rows[0].balance_usd;
+
+      if (balance_usd + balanceDiff < 0) {
+        throw new NotEnouthBalanceError();
+      }
+
+      await this.connection.execute(queryUpdateBalance);
+    } catch ({ message }) {
+      this.connection.rollback();
+      throw new NotEnouthBalanceError();
+    }
   };
 }

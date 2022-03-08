@@ -18,6 +18,12 @@ const accountHandler = {
     res.sendStatus(200);
   },
 
+  changeBalance: async (req, res, next) => {
+    const { login, balance_diff } = req.body;
+    await accountService.changeBalance(login, balance_diff);
+    res.sendStatus(200);
+  },
+
   getTop: async (req, res, next) => {
     const cacheKey = "accounts_top_rating";
     const cacheTtl = 10000;

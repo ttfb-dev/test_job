@@ -199,7 +199,7 @@ curl --location --request GET '127.0.0.1/v1/rating'
 <details>
   <summary>Обновление всех подписок</summary>
   
-  Метод недоступен через api-gw, можно вызывать только напрямую через сервис, обратившись к порту 8082
+- Метод не публичный (не доступен через api-gw), можно вызывать только напрямую через сервис
 
 ```bash
 curl --location --request POST '127.0.0.1:8082/v1/refresh-all'
@@ -212,6 +212,23 @@ curl --location --request POST '127.0.0.1:8082/v1/refresh-all'
 ```bash
 curl --location --request POST '127.0.0.1/v1/refresh' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAwMDAwMDAwMDA2NDg0NCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.-UDpdJV27oQ5GnikTMSfPMyna8WcOpcAao4xji1yVQU'
+```
+
+</details>
+<details>
+  <summary>Изменение баланса пользователя</summary>
+
+- Параметр correlation должен быть уникальным для каждого запроса в рамках одной минуты
+- Метод не публичный (не доступен через api-gw), потому вызывается напрямую через сервис
+
+```bash
+curl --location --request POST '127.0.0.1:8082/v1/change-balance' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "correlation": "d7831e33-d651-4fb9-84b4-9997cab677b1",
+    "login": "60000000000061841",
+    "balance_diff": -1000
+}'
 ```
 
 </details>
