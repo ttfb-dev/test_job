@@ -135,7 +135,7 @@ payload = { login, source, r_login, r_sorce }
 ## Запуск в docker
 
 1. Порты 80, 8082 должны быть свободны
-2. Инициализация баз данных
+2. Инициализация баз данных (нужно дождаться пока закончится, потом Ctrl+C)
 
 ```bash
 ./init-db
@@ -152,3 +152,11 @@ payload = { login, source, r_login, r_sorce }
 ```bash
 ./run-dev
 ```
+
+## Проекты
+
+- api-gw
+- auth
+- subscriptions
+
+Описание каждого проекта в собственном readme.md
