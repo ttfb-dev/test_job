@@ -155,9 +155,9 @@ payload = { login, source, r_login, r_sorce }
 
 ## Проекты
 
-- api-gw
-- auth
-- subscriptions
+- [api-gw](https://github.com/ttfb-dev/test_job/tree/master/api-gw)
+- [auth](https://github.com/ttfb-dev/test_job/tree/master/auth)
+- [subscriptions](https://github.com/ttfb-dev/test_job/tree/master/subscriptions)
 
 Описание каждого проекта в собственном readme.md
 
