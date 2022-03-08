@@ -160,3 +160,58 @@ payload = { login, source, r_login, r_sorce }
 - subscriptions
 
 Описание каждого проекта в собственном readme.md
+
+## Примеры запросов
+
+<details>
+  <summary>Топ счетов</summary>
+
+```bash
+curl --location --request GET '127.0.0.1/v1/rating'
+```
+
+</details>
+
+<details>
+  <summary>Подписка</summary>
+  
+  ```bash
+  curl --location --request POST '127.0.0.1/v1/subscribe' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAwMDAwMDAwMDA2NDg0NCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.-UDpdJV27oQ5GnikTMSfPMyna8WcOpcAao4xji1yVQU' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+      "subscribe_to": "60000000000060839"
+  }'
+  ```
+</details>
+<details>
+  <summary>Отписка</summary>
+  
+  ```bash
+  curl --location --request POST '127.0.0.1/v1/unsubscribe' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAwMDAwMDAwMDA2NDg0NCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.-UDpdJV27oQ5GnikTMSfPMyna8WcOpcAao4xji1yVQU' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+      "unsubscribe_from": "60000000000060839"
+  }'
+  ```
+</details>
+<details>
+  <summary>Обновление всех подписок</summary>
+  
+  Метод недоступен через api-gw, можно вызывать только напрямую через сервис, обратившись к порту 8082
+
+```bash
+curl --location --request POST '127.0.0.1:8082/v1/refresh-all'
+```
+
+</details>
+<details>
+  <summary>Пересчёт подписок пользователя</summary>
+
+```bash
+curl --location --request POST '127.0.0.1/v1/refresh' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAwMDAwMDAwMDA2NDg0NCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.-UDpdJV27oQ5GnikTMSfPMyna8WcOpcAao4xji1yVQU'
+```
+
+</details>
