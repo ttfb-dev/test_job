@@ -5,7 +5,8 @@ networks:
     name: network
 
 volumes:
-  dbdata:
+  dbdata-master:
+  dbdata-slave:
 
 services:
   api:
@@ -21,7 +22,8 @@ services:
     ports:
       - "8082:80"
     depends_on:
-      - mysql
+      - mysql-master
+      - mysql-slave
 
   webhooks:
     container_name: subscriptions-webhooks
@@ -33,18 +35,72 @@ services:
     command: sh -c "npm run webhooks:start"
     networks:
       - default
-    ports:
-      - "8083:80"
     depends_on:
-      - mysql
+      - mysql-master
+      - mysql-slave
 
-  mysql:
-    container_name: subscriptions-mysql
-    image: mysql:8
-    volumes:
-      - ./build/mysql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
-      - "dbdata:/var/lib/mysql"
-    env_file: ./build/.env.list
+  worker-remove-subscriptions:
+    container_name: subscriptions-worker-remove-subscriptions
+    build:
+      context: .
+      dockerfile: build/node/Dockerfile
     restart: "no"
+    env_file: ./build/.env.list
+    command: sh -c "npm run worker-remove-subscriptions:start"
+    networks:
+      - default
+    depends_on:
+      - mysql-master
+      - mysql-slave
+
+  worker-refresh-account:
+    container_name: subscriptions-worker-refresh-account
+    build:
+      context: .
+      dockerfile: build/node/Dockerfile
+    restart: "no"
+    env_file: ./build/.env.list
+    command: sh -c "npm run worker-refresh-account:start"
+    networks:
+      - default
+    depends_on:
+      - mysql-master
+      - mysql-slave
+
+  mysql-master:
+    container_name: subscriptions-mysql-master
+    image: percona:8.0
+    volumes:
+      - ./build/mysql/setup_master.sql:/docker-entrypoint-initdb.d/setup.sql
+      - "dbdata-master:/var/lib/mysql"
+      - ./build/mysql/my-master.cnf:/etc/my.cnf.d/repl.cnf
+      - ./build/mysql/init-data.sql:/var/mysql/init-data.sql
+      - ./build/mysql/init-data:/var/mysql/init-data
+    command:
+      [
+        "mysqld",
+        "--loose-group-replication-local-address=subscriptions-mysql-master:6606",
+      ]
+    env_file: ./build/.env.list
+    restart: unless-stopped
     ports:
       - "3306:3306"
+
+  mysql-slave:
+    container_name: subscriptions-mysql-slave
+    image: percona:8.0
+    volumes:
+      - ./build/mysql/setup_slave.sql:/docker-entrypoint-initdb.d/setup.sql
+      - "dbdata-slave:/var/lib/mysql"
+      - ./build/mysql/my-slave.cnf:/etc/my.cnf.d/repl.cnf
+    command:
+      [
+        "mysqld",
+        "--loose-group-replication-local-address=subscriptions-mysql-slave:6606",
+      ]
+    env_file: ./build/.env.list
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    depends_on:
+      - mysql-master

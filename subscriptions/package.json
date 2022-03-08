@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "api:start": "node bin/api",
-    "webhooks:start": "node bin/webhooks"
+    "webhooks:start": "node bin/webhooks",
+    "worker-remove-subscriptions:start": "node bin/removeSubscriptionsWorker",
+    "worker-refresh-account:start": "node bin/refreshAccountWorker"
   },
   "author": "Bobrov Dmitrii",
   "license": "UNLICENSED",
   "dependencies": {
+    "cron": "^1.8.2",
     "express": "^4.17.3",
     "express-validator": "^6.14.0",
     "mysql-migrations": "^1.0.7",

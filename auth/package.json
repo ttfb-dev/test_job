@@ -13,6 +13,7 @@
   "author": "SpaceCats",
   "license": "UNLICENSED",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "jwt-decode": "^3.1.2"
   }
 }

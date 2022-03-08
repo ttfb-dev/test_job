@@ -17,5 +17,3 @@ services:
     env_file: ./build/.env.list
     networks:
       - default
-    ports:
-      - "8081:80"

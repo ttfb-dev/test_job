@@ -3,25 +3,39 @@ http:
 apiEndpoints:
   subscriptions:
     host: "*"
-    paths: ["/v1/subscriptions/*"]
+    paths: ["/v1/subscribe", "/v1/unsubscribe", "/v1/refresh"]
+  rating:
+    host: "*"
+    paths: ["/v1/rating"]
 serviceEndpoints:
   subscriptions:
-    url: ${SUBSCRIPTIONS_HOST:-'http://subscriptions'}
+    url: ${SUBSCRIPTIONS_HOST:-'http://subscriptions-api'}
 policies:
   - proxy
   - oauth2-introspect
-  - response-transformer
-  - log
+  - request-transformer
 pipelines:
+  rating:
+    apiEndpoints:
+      - rating
+    policies:
+      - proxy:
+          action:
+            serviceEndpoint: subscriptions
   subscriptions:
     apiEndpoints:
       - subscriptions
     policies:
-      - log:
-          - action:
-              message: ${req.method} ${req.originalUrl}
       - oauth2-introspect:
           - action:
               endpoint: "http://auth-api/v1/auth/intro"
               authorization_value: ""
               ttl: 400
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  user: req.user.sub
+      - proxy:
+          action:
+            serviceEndpoint: subscriptions

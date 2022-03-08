@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -w /var/mysql subscriptions-mysql-master /bin/bash "init-data"

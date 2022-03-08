@@ -1,15 +1,28 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import config from "../config/index.js";
 
 const db = {
-  connection: undefined,
+  master: {
+    connection: undefined,
 
-  initConnection: () => {
-    db.connection = mysql.createConnection(config.mysql);
+    initConnection: async () => {
+      db.master.connection = await mysql.createConnection(config.mysql.master);
+    },
+
+    closeConnection: async () => {
+      await db.master.connection.end();
+    },
   },
+  slave: {
+    connection: undefined,
 
-  closeConnection: () => {
-    db.connection.end();
+    initConnection: async () => {
+      db.slave.connection = await mysql.createConnection(config.mysql.slave);
+    },
+
+    closeConnection: async () => {
+      await db.slave.connection.end();
+    },
   },
 };
 

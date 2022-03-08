@@ -14,4 +14,3 @@ export COMPOSE_PROJECT_NAME=api-gw
 
 docker-compose build
 docker-compose up -d --remove-orphans
-docker-compose logs -f

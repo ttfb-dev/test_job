@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd api-gw
+./build/run-dev
+cd ..
+
+cd auth
+./build/run-dev
+cd ..
+
+cd subscriptions
+./build/run-dev
+cd ..

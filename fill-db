@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd subscriptions
+./build/fill-db
+cd ..

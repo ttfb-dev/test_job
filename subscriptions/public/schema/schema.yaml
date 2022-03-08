@@ -9,28 +9,152 @@ servers:
 paths:
   /v1/rating:
     get:
-      summary: Проверка токена авторизации
-      operationId: introspect-auth-token
+      summary: Получение топ рейтинга аккаунтов
+      operationId: get-top-rating
       tags:
-        - /auth
+        - /rating
       responses:
         "200":
-          description: Токен валидный
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  current_unix_timestamp:
-                    type: integer
-              example: { "current_unix_timestamp": 1602242279 }
-        "401":
-          description: Проверка провалена
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  current_unix_timestamp:
-                    type: integer
-              example: { "current_unix_timestamp": 1602242279 }
+          $ref: "#/components/responses/RatingResponse"
+        "400":
+          $ref: "#/components/responses/InvalidResponse"
+
+  /v1/refresh:
+    post:
+      summary: Принудительный пересчёт подписок и баланса подписок аккаунта
+      parameters:
+        - name: user
+          in: header
+          description: Логин автора запроса
+          required: true
+          type: string
+          value: "60000000000064844"
+      operationId: refresh-account
+      tags:
+        - /account
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/InvalidResponse"
+  /v1/refresh-all:
+    post:
+      summary: Принудительный пересчёт подписок и баланса подписок всех аккаунтов
+      operationId: refresh-all-accounts
+      tags:
+        - /account
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/InvalidResponse"
+
+  /v1/subscribe:
+    post:
+      summary: Подписка
+      parameters:
+        - name: user
+          in: header
+          description: Логин автора запроса
+          required: true
+          type: string
+          value: "60000000000064844"
+      requestBody:
+        description: На кого оформляется подписка
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscribe_to:
+                  type: string
+                  example: "60000000000060839"
+      operationId: subscribe
+      tags:
+        - /subscriptions
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/InvalidResponse"
+
+  /v1/unsubscribe:
+    post:
+      summary: Подписка
+      parameters:
+        - name: user
+          in: header
+          description: Логин автора запроса
+          required: true
+          type: string
+          value: "60000000000064844"
+      requestBody:
+        description: На кого оформляется подписка
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unsubscribe_from:
+                  type: string
+                  example: "60000000000060839"
+      operationId: unsubscribe
+      tags:
+        - /subscriptions
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/InvalidResponse"
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        source:
+          type: string
+        login:
+          type: string
+        balance_usd:
+          type: number
+        balance_usd_sub:
+          type: number
+        subscribers_count:
+          type: number
+    InvalidResponseObject:
+      type: object
+      description: Формат ошибки
+      required:
+        - code
+        - message
+      properties:
+        type:
+          type: string
+          description: Класс ошибки
+        message:
+          type: string
+          description: Текст ошибки
+  responses:
+    RatingResponse:
+      description: Топ рейтинга
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              rating:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+    InvalidResponse:
+      description: Ошибка обработки запроса
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InvalidResponseObject"
+
+    Success:
+      description: OK
